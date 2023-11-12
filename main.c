@@ -61,35 +61,6 @@ int main(int argc, char* args[]) {
     struct stat fileStat;
     fstat(fIn,&fileStat);
 
-    printf("nume fisier: %s\n", args[1]);
-    printf("inaltime: %d\n", infoHeader.height);
-    printf("lungime: %d\n", infoHeader.width);
-    printf("dimensiune: %lld\n", (long long)fileStat.st_size);
-    printf("identificatorul utilizatorului: %d\n", fileStat.st_uid);
-    printf("timpul ultimei modificari: %s",ctime(&fileStat.st_mtime));
-    printf("contorul de legaturi: %ld\n", fileStat.st_nlink);
-
-    // Owner's permissions
-    printf("drepturi de acces user: ");
-    printf((fileStat.st_mode & S_IRUSR) ? "r" : "-");
-    printf((fileStat.st_mode & S_IWUSR) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXUSR) ? "x" : "-");
-    printf("\n");
-
-    // Group's permissions
-    printf("drepturi de acces grup: ");
-    printf((fileStat.st_mode & S_IRGRP) ? "r" : "-");
-    printf((fileStat.st_mode & S_IWGRP) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXGRP) ? "x" : "-");
-    printf("\n");
-
-    // Others' permissions
-    printf("drepturi de acces altii: ");
-    printf((fileStat.st_mode & S_IROTH) ? "r" : "-");
-    printf((fileStat.st_mode & S_IWOTH) ? "w" : "-");
-    printf((fileStat.st_mode & S_IXOTH) ? "x" : "-");
-    printf("\n");
-
 
     if( (fOut = open("statistica.txt", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) < 0 )
     {
