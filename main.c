@@ -21,10 +21,12 @@ struct BMPInfoHeader {
     int colorsImportant;
 };
 
-int main(int argc, char* args[]) {
-    int fIn, fOut;
-    char buffer[BUFSIZ];
+int fIn, fOut;
+char buffer[BUFSIZ];
+struct BMPInfoHeader infoHeader;
 
+
+void verifyArgs(int argc, char **args) {
     if(argc != 2) {
         if(argc == 1) {
             perror("Usage ./program <fisier_intrare>");
@@ -36,8 +38,10 @@ int main(int argc, char* args[]) {
 
         exit(-1);
     }
+}
 
-    if( (fIn = open(args[1],O_RDONLY)) < 0 )
+void readFromFile(char **args) {
+     if( (fIn = open(args[1],O_RDONLY)) < 0 )
     {
       perror("input file error \n");
     }
@@ -45,13 +49,13 @@ int main(int argc, char* args[]) {
     if (read(fIn, buffer, BUFSIZ) == -1) {
         perror("Error reading file header");
         close(fIn);
-        return -1;  // Error reading file header
+        exit(-1);
     }
+}
 
-    struct BMPInfoHeader infoHeader;
-
+void generatestatisticsFile(char **args) {
     ssize_t bytesRead = read(fIn, &infoHeader, sizeof(struct BMPInfoHeader));
-
+    
     if (bytesRead == -1) {
         perror("Error reading info header");
         close(fIn);
@@ -78,6 +82,14 @@ int main(int argc, char* args[]) {
 
     close(fOut);
     close(fIn);
+}
+
+int main(int argc, char* args[]) {
+    verifyArgs(argc, args);
+
+    readFromFile(args);
+
+    generatestatisticsFile(args);
 
     return 0;
 }
