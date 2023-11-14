@@ -1,10 +1,6 @@
-nume fisier: img.bmp
-inaltime: 201591563
-lungime: 17171968
-dimensiune: 818058
-identificatorul utilizatorului: 1000
-timpul ultimei modificari: Tue Nov  7 18:51:40 2023
-contorul de legaturi: 1
-drepturi de acces user: RW-
-drepturi de acces grup: RW-
-drepturi de acces altii: R--
+nume director: ..
+identificatorul utilizatorului: ..
+drepturi de acces user: RWX
+drepturi de acces grup: RWX
+drepturi de acces altii: R-X
+
