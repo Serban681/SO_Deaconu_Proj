@@ -1,38 +1,32 @@
-nume director: ..
-identificatorul utilizatorului: ..
-drepturi de acces user: RWX
-drepturi de acces grup: RWX
-drepturi de acces altii: R-X
-
 nume director: .
 identificatorul utilizatorului: .
-drepturi de acces user: --X
-drepturi de acces grup: RW-
-drepturi de acces altii: RWX
-
-nume fisier: img.bmp
-inaltime: -220427736
-lungime: 32764
-dimensiune: 137
-identificatorul utilizatorului: -528450638
-timpul ultimei modificari: Thu Jan  1 03:08:16 1970
-contorul de legaturi: 140724383024976
-drepturi de acces user: R--
+drepturi de acces user: ---
 drepturi de acces grup: ---
 drepturi de acces altii: ---
 
 nume fisier: dog.txt
 dimensiune: 137
-identificatorul utilizatorului: -528450638
-timpul ultimei modificari: Thu Jan  1 03:08:16 1970
-contorul de legaturi: 140724383024976
-drepturi de acces user: R--
+identificatorul utilizatorului: 328243712
+timpul ultimei modificari: Mon Nov 20 14:43:28 2023
+contorul de legaturi: 140725596350336
+drepturi de acces user: ---
 drepturi de acces grup: ---
 drepturi de acces altii: ---
 
-nume director: Fold1
-identificatorul utilizatorului: Fold1
-drepturi de acces user: --X
-drepturi de acces grup: RW-
+nume fisier: img.bmp
+inaltime: 1615818812
+lungime: 32765
+dimensiune: 137
+identificatorul utilizatorului: 328243712
+timpul ultimei modificari: Mon Nov 20 14:43:28 2023
+contorul de legaturi: 140725596350336
+drepturi de acces user: ---
+drepturi de acces grup: ---
+drepturi de acces altii: ---
+
+nume director: ..
+identificatorul utilizatorului: ..
+drepturi de acces user: -W-
+drepturi de acces grup: R--
 drepturi de acces altii: RWX
 

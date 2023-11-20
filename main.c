@@ -7,30 +7,44 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <dirent.h>
+#include <stdint.h>
 
-struct BMPInfoHeader {
-    int headerSize;     
-    int width;          
-    int height;         
-    int planes;         
-    int bitCount;       
-    int compression;    
-    int imageSize;      
-    int xPixelsPerMeter;
-    int yPixelsPerMeter;
-    int colorsUsed;     
-    int colorsImportant;
+struct Header {
+    int16_t signature;
+    int32_t fileSize;
+    int32_t reserved;
+    int32_t dataOffset;
+};
+
+struct InfoHeader {
+    int32_t size;
+    int32_t width;
+    int32_t height;
+    int16_t planes;
+    int16_t bitCount;
+    int32_t compression;
+    int32_t XpixelsPerM;
+    int32_t YpixelsPerM;
+    int32_t colorsUsed;
+    int32_t colorsImportant;
+};
+
+struct ColorTable {
+    int8_t red;
+    int8_t green;
+    int8_t blue;
+    int8_t reserved;
 };
 
 int fOut;
 DIR *dir;
 char buffer[BUFSIZ];
-struct BMPInfoHeader infoHeader;
+struct InfoHeader infoHeader;
 
 void verifyArgs(int argc, char **args) {
     if(argc != 2) {
         if(argc == 1) {
-            perror("Usage ./program <fisier_intrare>");
+            perror("Usage ./program <director_intrare> <director_iesire>");
         }
         else {
             char *err = strcat("Usage ./program ", args[1]);
@@ -50,9 +64,11 @@ void generateStatsDir(struct dirent *info) {
 }
 
 void generateStatsBmpFile(struct dirent *info) {
-    struct BMPInfoHeader infoHeader;
+    struct Header header;
+    struct InfoHeader infoHeader;
     
-    read(*info->d_name, &infoHeader, sizeof(struct BMPInfoHeader));
+    read(*info->d_name, &header, sizeof(struct Header));
+    read(*info->d_name, &infoHeader, sizeof(struct InfoHeader));
 
     struct stat fileStat;
     fstat(*info->d_name, &fileStat);
