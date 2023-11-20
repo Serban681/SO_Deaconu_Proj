@@ -1,32 +1,27 @@
-nume director: .
-identificatorul utilizatorului: .
-drepturi de acces user: ---
-drepturi de acces grup: ---
-drepturi de acces altii: ---
-
-nume fisier: dog.txt
-dimensiune: 137
-identificatorul utilizatorului: 328243712
-timpul ultimei modificari: Mon Nov 20 14:43:28 2023
-contorul de legaturi: 140725596350336
-drepturi de acces user: ---
-drepturi de acces grup: ---
-drepturi de acces altii: ---
-
-nume fisier: img.bmp
-inaltime: 1615818812
-lungime: 32765
-dimensiune: 137
-identificatorul utilizatorului: 328243712
-timpul ultimei modificari: Mon Nov 20 14:43:28 2023
-contorul de legaturi: 140725596350336
+nume director: ..
+identificatorul utilizatorului: ..
 drepturi de acces user: ---
 drepturi de acces grup: ---
 drepturi de acces altii: ---
 
 nume director: ..
 identificatorul utilizatorului: ..
-drepturi de acces user: -W-
-drepturi de acces grup: R--
-drepturi de acces altii: RWX
+drepturi de acces user: ---
+drepturi de acces grup: ---
+drepturi de acces altii: ---
+
+nume fisier: dog.txt
+dimensiune: 1000
+identificatorul utilizatorului: 0
+timpul ultimei modificari: Mon Nov 20 17:33:54 2023
+contorul de legaturi: 2053
+drepturi de acces user: --X
+drepturi de acces grup: -WX
+drepturi de acces altii: --X
+
+nume director: .
+identificatorul utilizatorului: .
+drepturi de acces user: ---
+drepturi de acces grup: ---
+drepturi de acces altii: ---
 
