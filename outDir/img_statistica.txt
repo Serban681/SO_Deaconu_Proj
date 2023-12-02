@@ -1,10 +1,10 @@
 nume fisier: img.bmp
-inaltime: -1247997736
-lungime: 32559
+inaltime: -1217396520
+lungime: 32619
 dimensiune: 3
-identificatorul utilizatorului: 32559
+identificatorul utilizatorului: 32619
 timpul ultimei modificari: Thu Jan  1 03:08:16 1970
-contorul de legaturi: 140728809030024
+contorul de legaturi: 140736662586184
 drepturi de acces user: R--
 drepturi de acces grup: --X
 drepturi de acces altii: -WX

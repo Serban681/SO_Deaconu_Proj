@@ -9,6 +9,7 @@
 #include <dirent.h>
 #include <stdint.h>
 #include <sys/wait.h>
+#include <ctype.h>
 
 struct Header {
     int16_t signature;
@@ -43,7 +44,16 @@ DIR *outDir;
 char buffer[3000];
 struct InfoHeader infoHeader;
 int procesFiu, status;
-int pid[200];
+int pid[100];
+
+int pipeFF[100][2];
+
+void verif_pipes(int i) {
+    if(pipe(pipeFF[i]) < 0) {
+        perror("Eroare la pipe-uri.\n");
+        exit(-1);
+    }
+}
 
 void createFile(char *buffer, char *fileName, char *dirName)
 {
@@ -68,9 +78,9 @@ void createFile(char *buffer, char *fileName, char *dirName)
 }
 
 void verifyArgs(int argc, char **args) {
-    if(argc != 3) {
-        if(argc == 2 || argc == 1) {
-            perror("Usage ./program <director_intrare> <director_iesire>");
+    if(argc != 4) {
+        if(argc == 3 || argc == 2 || argc == 1) {
+            perror("Usage ./program <director_intrare> <director_iesire> <c>");
         }
         else {
             char *err = strcat("Usage ./program ", args[1]);
@@ -81,13 +91,37 @@ void verifyArgs(int argc, char **args) {
     }
 }
 
+void verifyCorrectSentences(char* text, char* letter) {
+    const char *scriptName = "script.sh";
+
+    char command[100];
+    snprintf(command, sizeof(command), 
+        "bash %s %s\n", 
+        scriptName, 
+        letter
+    );
+
+    FILE *scriptInput = popen(command, "w");
+    if (scriptInput == NULL) {
+        perror("Error opening script");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(scriptInput, text);
+
+    if (pclose(scriptInput) == -1) {
+        perror("Error closing script");
+        exit(EXIT_FAILURE);
+    }
+}
+
 void generateStatsDir(struct dirent *info, char* dirName) {
     struct stat fileStat;
     fstat(*info->d_name, &fileStat);
 
     snprintf(buffer,sizeof(buffer), "nume director: %s\nidentificatorul utilizatorului: %s\ndrepturi de acces user: %s%s%s\ndrepturi de acces grup: %s%s%s\ndrepturi de acces altii: %s%s%s\n\n", info->d_name,info->d_name, (fileStat.st_mode & S_IRUSR) ? "R" : "-", (fileStat.st_mode & S_IWUSR) ? "W" : "-", (fileStat.st_mode & S_IXUSR) ? "X" : "-", (fileStat.st_mode & S_IRGRP) ? "R" : "-", (fileStat.st_mode & S_IWGRP) ? "W" : "-", (fileStat.st_mode & S_IXGRP) ? "X" : "-", (fileStat.st_mode & S_IROTH) ? "R" : "-", (fileStat.st_mode & S_IWOTH) ? "W" : "-", (fileStat.st_mode & S_IXOTH) ? "X" : "-");
     
-    createFile(buffer, info->d_name, dirName); 
+    createFile(buffer, info->d_name, dirName);
 }
 
 void generateStatsBmpFile(struct dirent *info, char* dirName) {
@@ -129,12 +163,68 @@ void generateStatsBmpFile(struct dirent *info, char* dirName) {
     createFile(buffer, info->d_name, dirName);    
 }
 
-void generateStatsRegFile(struct dirent *info, char* dirName) {
+void secondProccess(int i, char* letter) {
+    if (pid[i + 50] == 0) {
+        close(pipeFF[1]);
+    
+        char buffer[1024];
+        ssize_t bytesRead = read(pipeFF[i+50][0], buffer, sizeof(buffer));
+        if (bytesRead == -1) {
+            perror("read");
+            exit(EXIT_FAILURE);
+        }
+
+        buffer[bytesRead] = '\0';
+
+        close(pipeFF[0]);
+
+        verifyCorrectSentences(buffer, letter);
+
+        exit(1);
+    }
+}
+
+void generateStatsRegFile(struct dirent *info, char* dirName, char* inDir, int i, char* letter) {
     struct stat fileStat;
     fstat(*info->d_name, &fileStat);
 
     sprintf(buffer,"nume fisier: %s\ndimensiune: %lld\nidentificatorul utilizatorului: %d\ntimpul ultimei modificari: %scontorul de legaturi: %ld\ndrepturi de acces user: %s%s%s\ndrepturi de acces grup: %s%s%s\ndrepturi de acces altii: %s%s%s\n\n", info->d_name, (long long)fileStat.st_size, fileStat.st_uid, ctime(&fileStat.st_mtime), fileStat.st_nlink, (fileStat.st_mode & S_IRUSR) ? "R" : "-", (fileStat.st_mode & S_IWUSR) ? "W" : "-", (fileStat.st_mode & S_IXUSR) ? "X" : "-", (fileStat.st_mode & S_IRGRP) ? "R" : "-", (fileStat.st_mode & S_IWGRP) ? "W" : "-", (fileStat.st_mode & S_IXGRP) ? "X" : "-", (fileStat.st_mode & S_IROTH) ? "R" : "-", (fileStat.st_mode & S_IWOTH) ? "W" : "-", (fileStat.st_mode & S_IXOTH) ? "X" : "-");
-    createFile(buffer, info->d_name, dirName); 
+    createFile(buffer, info->d_name, dirName);
+
+    char filePath[100] = "";
+    strcat(filePath, inDir);
+    strcat(filePath, "/");
+    strcat(filePath, info->d_name);
+    strcat(filePath, ".txt");
+
+    int fileDescriptor = open(filePath, O_RDONLY);
+    if (fileDescriptor == -1) {
+        perror("Error opening file");
+        exit(-1);
+    }
+
+    char buffer[1024];
+    ssize_t bytesRead;
+    while ((bytesRead = read(fileDescriptor, buffer, sizeof(buffer))) > 0) { }
+
+    verifyCorrectSentences(buffer, letter);
+
+    if (pid[i] == 0) {
+        close(pipeFF[i][0]);
+
+        const char *message = "Hello, child process!";
+
+        ssize_t bytesWritten = write(pipeFF[i][1], message, strlen(message));
+        if (bytesWritten == -1) {
+            perror("write");
+            exit(-1);
+        }
+
+        close(pipeFF[i][1]);
+
+        exit(1);
+    }
+    
 }
 
 void generateStatsLnk(struct dirent *info, char* dirName) {
@@ -185,9 +275,19 @@ void openDir(const char *dirName,int argc, char *argv[]) {
                         generateStatsLnk(info, argv[2]);
                     }
                     else {
-                        generateStatsRegFile(info, argv[2]);
+                        verif_pipes(i);
+
+                        generateStatsRegFile(info, argv[2], argv[1], i, argv[3]);
+
+                        if ((pid[i+50] = fork()) == -1) {
+                            perror("fork");
+                            exit(EXIT_FAILURE);
+                        }
+                        
+                        secondProccess(i, argv[3]);
+                        
                         value = 8;
-                    } 
+                    }
                 }
                 else if (info->d_type == DT_DIR) {
                     generateStatsDir(info, argv[2]);
@@ -199,6 +299,14 @@ void openDir(const char *dirName,int argc, char *argv[]) {
                 exit(value);
             } 
         }
+
+        
+
+        close(pipeFF[i][0]);
+        close(pipeFF[i][1]);
+
+        wait(NULL);
+        wait(NULL);
 
         i++;
     }
@@ -219,5 +327,6 @@ int main(int argc, char* args[]) {
     
     close(fOut);
     closedir(dir);
+
     return 0;
 }
