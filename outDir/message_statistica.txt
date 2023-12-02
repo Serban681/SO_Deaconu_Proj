@@ -1,4 +1,4 @@
-nume fisier: dog.txt
+nume fisier: message.txt
 dimensiune: -8
 identificatorul utilizatorului: 0
 timpul ultimei modificari: Thu Jan  1 02:00:00 1970
